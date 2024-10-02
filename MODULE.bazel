@@ -1,0 +1,98 @@
+module(
+    name = "logos-app-auth-cognito",
+    version = "0.0.1",
+)
+
+bazel_dep(name = "logos", version = "0.0.1")
+#git_override(
+#    module_name = "logos",
+#    commit = "04cf203089306308bc3bedc144d4c1d4c049c17f",
+#    init_submodules = True,
+#    remote = "git@github.com:logos-devs/logos.git",
+#)
+
+local_path_override(
+    module_name = "logos",
+    path = "/home/trinque/src/logos",
+)
+
+## aspect_bazel_lib
+#bazel_dep(
+#    name = "aspect_bazel_lib",
+#    version = "2.7.7",
+#)
+
+# grpc-java
+bazel_dep(name = "grpc-java", version = "1.64.0", repo_name = "io_grpc_grpc_java")
+
+# pnpm
+bazel_dep(name = "rules_nodejs", version = "6.2.0")
+bazel_dep(name = "aspect_rules_js", version = "2.0.1")
+
+node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node")
+node.toolchain()
+
+npm = use_extension(
+    "@aspect_rules_js//npm:extensions.bzl",
+    "npm",
+)
+npm.npm_translate_lock(
+    name = "npm_logos_app_auth_cognito",
+    npmrc = "//:.npmrc",
+    pnpm_lock = "//:pnpm-lock.yaml",
+    verify_node_modules_ignored = "//:.bazelignore",
+)
+use_repo(
+    npm,
+    npm = "npm_logos_app_auth_cognito",
+)
+
+pnpm = use_extension("@aspect_rules_js//npm:extensions.bzl", "pnpm")
+use_repo(pnpm, "pnpm")
+
+# rules_ts
+bazel_dep(name = "aspect_rules_ts", version = "3.1.0")
+
+rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext")
+rules_ts_ext.deps(
+    name = "npm_typescript_logos_app_auth_cognito",  # naming works around bug in cross-workspace deps
+    ts_version_from = "//:package.json",
+)
+use_repo(
+    rules_ts_ext,
+    npm_typescript = "npm_typescript_logos_app_auth_cognito",
+)
+
+# protobuf
+bazel_dep(name = "protobuf", version = "23.1", repo_name = "com_google_protobuf")
+
+# rules_jvm_external
+bazel_dep(name = "rules_jvm_external", version = "6.2")
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+maven.install(
+    name = "maven_logos",
+    artifacts = [
+        # deps from the framework are merged with any deps specified here
+        "io.jsonwebtoken:jjwt:0.12.3",
+        "org.apache.httpcomponents.client5:httpclient5:5.2.2",
+        "software.amazon.awssdk:cognitoidentityprovider:2.26.23",
+    ],
+    fail_if_repin_required = True,
+    fetch_javadoc = True,
+    fetch_sources = True,
+    generate_compat_repositories = True,
+    # REPIN=1 bazel run @maven_logos//:pin
+    lock_file = "//:maven_install.json",
+    repositories = [
+        "https://repo.maven.apache.org/maven2/",
+    ],
+    version_conflict_policy = "pinned",
+)
+use_repo(maven, "maven_logos")
+
+# aspect_bazel_lib
+bazel_dep(
+    name = "aspect_bazel_lib",
+    version = "2.7.7",
+)

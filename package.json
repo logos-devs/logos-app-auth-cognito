@@ -1,0 +1,40 @@
+{
+  "name": "logos",
+  "private": true,
+  "type": "module",
+  "browser": {
+    "crypto": false
+  },
+  "dependencies": {
+    "@adobe/lit-mobx": "2.2.2",
+    "@grpc/grpc-js": "1.10.8",
+    "@rollup/plugin-commonjs": "26.0.1",
+    "@rollup/plugin-html": "1.0.3",
+    "@rollup/plugin-json": "6.1.0",
+    "@rollup/plugin-node-resolve": "15.2.3",
+    "@rollup/plugin-replace": "5.0.7",
+    "@rollup/plugin-terser": "0.4.4",
+    "@spectrum-web-components/action-menu": "0.46.0",
+    "@spectrum-web-components/button": "0.46.0",
+    "@spectrum-web-components/menu": "0.46.0",
+    "@spectrum-web-components/overlay": "0.46.0",
+    "@types/node": "20.14.2",
+    "@webcomponents/webcomponentsjs": "2.8.0",
+    "@web/dev-server": "0.4.5",
+    "google-protobuf": "3.21.2",
+    "grpc-web": "1.5.0",
+    "inversify": "6.0.2",
+    "inversify-inject-decorators": "3.1.0",
+    "lit": "3.1.4",
+    "lit-html": "3.1.4",
+    "lit-redux-router": "0.22.0",
+    "mobx": "6.12.3",
+    "reflect-metadata": "0.2.2",
+    "rollup": "4.18.0",
+    "rollup-plugin-includepaths": "0.2.4",
+    "source-map-support": "0.5.21",
+    "tslib": "2.6.3",
+    "typescript": "5.4.5",
+    "winston": "3.13.0"
+  }
+}
