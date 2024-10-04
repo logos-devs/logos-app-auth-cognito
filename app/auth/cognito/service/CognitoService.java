@@ -11,6 +11,7 @@ import dev.logos.user.User;
 import dev.logos.user.UserContext;
 import io.grpc.Context;
 import io.grpc.stub.StreamObserver;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -84,7 +85,7 @@ public class CognitoService extends CognitoServiceGrpc.CognitoServiceImplBase im
                                 .setExpiresIn(tokens.expires_in)
                                 .build());
                 responseObserver.onCompleted();
-            });
+            }).run();
         } catch (IOException e) {
             onFailedRequest(responseObserver, TOKEN_REQUEST_FAILURE_MSG, e);
         }
@@ -101,13 +102,15 @@ public class CognitoService extends CognitoServiceGrpc.CognitoServiceImplBase im
                 new BasicNameValuePair("client_secret", cognitoClientCredentialsSecret.clientSecret()),
                 new BasicNameValuePair("redirect_uri", cognitoStackOutputs.cognitoUserPoolDomainRedirectUrl())
         )));
+        tokenRequest.setConfig(RequestConfig.custom()
+                .setConnectTimeout(10 * 1000)
+                .setConnectionRequestTimeout(10 * 1000)
+                .build());
 
         try (CloseableHttpClient client = HttpClients.createDefault();
              CloseableHttpResponse tokenResponse = client.execute(tokenRequest)) {
             if (tokenResponse.getStatusLine().getStatusCode() != HttpStatusCode.OK) {
-                onFailedRequest(responseObserver, TOKEN_REQUEST_FAILURE_MSG,
-                        EntityUtils.toString(tokenResponse.getEntity()));
-                throw new IOException(TOKEN_REQUEST_FAILURE_MSG);
+                throw new IOException(EntityUtils.toString(tokenResponse.getEntity()));
             }
 
             return new Gson().fromJson(EntityUtils.toString(tokenResponse.getEntity()), Tokens.class);
