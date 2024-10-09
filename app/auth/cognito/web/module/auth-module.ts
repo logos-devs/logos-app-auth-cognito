@@ -1,8 +1,8 @@
-import {CognitoServicePromiseClient} from "app/auth/cognito/proto/cognito_grpc_web_pb.js";
-import {AppModule, registerModule} from "external/logos~/dev/logos/web/module/app-module";
-import {User} from "external/logos~/dev/logos/web/module/user";
+import {CognitoServicePromiseClient} from "../../proto/cognito_grpc_web_pb";
+import {AppModule, registerModule} from "@logos/web/dev/logos/web/module/app-module";
+import {User} from "@logos/web/dev/logos/web/module/user";
 import {injectable} from "inversify";
-import {action, autorun, observable} from 'mobx';
+import {observable} from 'mobx';
 
 @injectable()
 export class CognitoUser extends User {

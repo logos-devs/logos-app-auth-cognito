@@ -1,8 +1,6 @@
 import {css, html, LitElement, CSSResult, TemplateResult} from "lit";
 import {customElement, state} from "lit/decorators.js";
 
-import '@spectrum-web-components/action-menu/sp-action-menu.js';
-import '@spectrum-web-components/icon/sp-icon.js';
 import {
     GetSignInUrlRequest,
     GetSignInUrlResponse,
@@ -10,14 +8,14 @@ import {
     GetCurrentUserResponse,
     ProcessAuthCodeRequest,
     ProcessAuthCodeResponse
-} from "app/auth/cognito/proto/cognito_pb";
-import {CognitoServicePromiseClient} from "app/auth/cognito/proto/cognito_grpc_web_pb";
-import {lazyInject} from "external/logos~/dev/logos/web/module/app-module";
+} from "../../proto/cognito_pb";
+import {CognitoServicePromiseClient} from "../../proto/cognito_grpc_web_pb";
+import {lazyInject} from "@logos/web/dev/logos/web/module/app-module";
 import {when} from "lit/directives/when.js";
+
 import '@spectrum-web-components/action-menu/sp-action-menu.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-login.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-real-time-customer-profile.js';
-import '@spectrum-web-components/popover/sp-popover.js';
 import '@spectrum-web-components/button/sp-button.js';
 import '@spectrum-web-components/menu/sp-menu.js';
 import '@spectrum-web-components/menu/sp-menu-group.js';

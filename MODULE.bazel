@@ -4,23 +4,12 @@ module(
 )
 
 bazel_dep(name = "logos", version = "0.0.1")
-#git_override(
-#    module_name = "logos",
-#    commit = "04cf203089306308bc3bedc144d4c1d4c049c17f",
-#    init_submodules = True,
-#    remote = "git@github.com:logos-devs/logos.git",
-#)
-
-local_path_override(
+git_override(
     module_name = "logos",
-    path = "/home/trinque/src/logos",
+    commit = "d7a40dcaaf8cae3ad4e8bd790f11d4d8d15a87fc",
+    init_submodules = True,
+    remote = "git@github.com:logos-devs/logos.git",
 )
-
-## aspect_bazel_lib
-#bazel_dep(
-#    name = "aspect_bazel_lib",
-#    version = "2.7.7",
-#)
 
 # grpc-java
 bazel_dep(name = "grpc-java", version = "1.64.0", repo_name = "io_grpc_grpc_java")
@@ -40,6 +29,7 @@ npm.npm_translate_lock(
     name = "npm_logos_app_auth_cognito",
     npmrc = "//:.npmrc",
     pnpm_lock = "//:pnpm-lock.yaml",
+    update_pnpm_lock = True,
     verify_node_modules_ignored = "//:.bazelignore",
 )
 use_repo(

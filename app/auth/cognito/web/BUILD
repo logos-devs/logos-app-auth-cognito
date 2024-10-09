@@ -1,3 +1,4 @@
+load("@aspect_rules_js//npm:defs.bzl", "npm_package")
 load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
 
 ts_project(
@@ -15,8 +16,10 @@ ts_project(
     tsconfig = "//:tsconfig",
     visibility = ["//visibility:public"],
     deps = [
+        "//:node_modules/@logos/web",
         "//:node_modules/@spectrum-web-components/action-menu",
         "//:node_modules/@spectrum-web-components/button",
+        "//:node_modules/@spectrum-web-components/icons-workflow",
         "//:node_modules/@spectrum-web-components/menu",
         "//:node_modules/@spectrum-web-components/overlay",
         "//:node_modules/@types/node",
@@ -26,7 +29,6 @@ ts_project(
         "//:node_modules/lit-html",
         "//:node_modules/mobx",
         "//:node_modules/reflect-metadata",
-        "//app/auth/cognito/proto:grpc_web",
-        "@logos//dev/logos/web",
+        "//app/auth/cognito/proto:js_grpc",
     ],
 )
