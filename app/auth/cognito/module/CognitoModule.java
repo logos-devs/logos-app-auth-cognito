@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import com.google.inject.multibindings.OptionalBinder;
 import dev.logos.app.AppModule;
 import dev.logos.app.register.registerModule;
 import dev.logos.stack.aws.module.EksModule.EksStack;
@@ -31,16 +32,35 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import static dev.logos.stack.aws.module.EksModule.EksStack.RPC_SERVICE_ACCOUNT_ROLE_ARN_OUTPUT;
 
 @registerModule
 public class CognitoModule extends AppModule {
+    @BindingAnnotation
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface CognitoAllowedCallbackUrl {
+    }
+
+    @BindingAnnotation
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface CognitoSignInRedirectUrl {
+    }
+
+    @BindingAnnotation
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface CognitoAllowedLogoutUrl {
+    }
+
     @Override
     protected void configure() {
         stack(CognitoStack.class);
         services(CognitoService.class);
         interceptors(CookieServerInterceptor.class, CognitoServerInterceptor.class);
+
+        OptionalBinder.newOptionalBinder(binder(), CognitoDomainOptions.Builder.class).setDefault().toInstance(
+                CognitoDomainOptions.builder().domainPrefix("logos"));
     }
 
     @Provides
@@ -86,28 +106,24 @@ public class CognitoModule extends AppModule {
     }
 
     @Provides
-    UserPoolDomainProps.Builder userPoolDomainPropsBuilder() {
-        return UserPoolDomainProps.builder()
-                .cognitoDomain(CognitoDomainOptions.builder()
-                        .domainPrefix("logos-example")
-                        .build());
+    UserPoolDomainProps.Builder userPoolDomainPropsBuilder(CognitoDomainOptions.Builder cognitoDomainOptionsBuilder) {
+        return UserPoolDomainProps.builder().cognitoDomain(cognitoDomainOptionsBuilder.build());
     }
 
     @Provides
-    UserPoolClientProps.Builder userPoolClientPropsBuilder() {
+    UserPoolClientProps.Builder userPoolClientPropsBuilder(
+            @CognitoAllowedCallbackUrl Set<String> callbackUrls,
+            @CognitoAllowedLogoutUrl Set<String> logoutUrls
+    ) {
         return UserPoolClientProps.builder()
                 .generateSecret(true)
                 .accessTokenValidity(Duration.hours(8))
                 .idTokenValidity(Duration.hours(8))
                 .oAuth(OAuthSettings.builder()
-                        .callbackUrls(List.of(
-                                "https://example.logos.dev/login/complete",
-                                "https://example.logos.dev/oauth2/idpresponse"
-                        ))
-                        .logoutUrls(List.of("https://example.logos.dev/logout"))
+                        .callbackUrls(callbackUrls.stream().toList())
+                        .logoutUrls(logoutUrls.stream().toList())
                         .flows(OAuthFlows.builder()
                                 .authorizationCodeGrant(true)
-                                .implicitCodeGrant(true)
                                 .build())
                         .scopes(List.of(OAuthScope.EMAIL,
                                 OAuthScope.OPENID,
@@ -116,9 +132,9 @@ public class CognitoModule extends AppModule {
     }
 
     @Provides
-    SignInUrlOptions.Builder signInUrlOptionsBuilder() {
+    SignInUrlOptions.Builder signInUrlOptionsBuilder(@CognitoSignInRedirectUrl String redirectUrl) {
         return SignInUrlOptions.builder()
-                .redirectUri("https://example.logos.dev/login/complete");
+                .redirectUri(redirectUrl);
     }
 
     @Provides

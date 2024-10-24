@@ -99,8 +99,6 @@ public class CognitoServerInterceptor implements ServerInterceptor {
                     .build()
                     .parseSignedClaims(token);
 
-            claims.getPayload().forEach((key, value) -> logger.log(Level.FINEST, key + ": " + value));
-
             return new AuthenticatedUser(token, claims.getPayload());
         } catch (ExpiredJwtException | IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             logger.log(Level.SEVERE, "Failed to authenticate", e);
