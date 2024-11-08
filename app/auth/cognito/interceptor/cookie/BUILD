@@ -5,8 +5,8 @@ java_library(
     ],
     visibility = ["//app:__subpackages__"],
     deps = [
-        "@io_grpc_grpc_java//api",
-        "@io_grpc_grpc_java//context",
         "@maven_logos//:com_google_code_gson_gson",
+        "@maven_logos//:io_grpc_grpc_api",
+        "@maven_logos//:io_grpc_grpc_context",
     ],
 )

@@ -11,12 +11,9 @@ git_override(
     remote = "git@github.com:logos-devs/logos.git",
 )
 
-# grpc-java
-bazel_dep(name = "grpc-java", version = "1.64.0", repo_name = "io_grpc_grpc_java")
-
 # pnpm
-bazel_dep(name = "rules_nodejs", version = "6.2.0")
-bazel_dep(name = "aspect_rules_js", version = "2.0.1")
+bazel_dep(name = "rules_nodejs", version = "6.3.0")
+bazel_dep(name = "aspect_rules_js", version = "2.1.0")
 
 node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node")
 node.toolchain()
@@ -27,6 +24,7 @@ npm = use_extension(
 )
 npm.npm_translate_lock(
     name = "npm_logos_app_auth_cognito",
+    data = ["//:package.json"],
     npmrc = "//:.npmrc",
     pnpm_lock = "//:pnpm-lock.yaml",
     update_pnpm_lock = True,
@@ -41,11 +39,12 @@ pnpm = use_extension("@aspect_rules_js//npm:extensions.bzl", "pnpm")
 use_repo(pnpm, "pnpm")
 
 # rules_ts
-bazel_dep(name = "aspect_rules_ts", version = "3.1.0")
+bazel_dep(name = "aspect_rules_ts", version = "3.2.1")
 
 rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext")
 rules_ts_ext.deps(
     name = "npm_typescript_logos_app_auth_cognito",  # naming works around bug in cross-workspace deps
+    ts_integrity = "sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==",
     ts_version_from = "//:package.json",
 )
 use_repo(
@@ -53,11 +52,8 @@ use_repo(
     npm_typescript = "npm_typescript_logos_app_auth_cognito",
 )
 
-# protobuf
-bazel_dep(name = "protobuf", version = "23.1", repo_name = "com_google_protobuf")
-
 # rules_jvm_external
-bazel_dep(name = "rules_jvm_external", version = "6.2")
+bazel_dep(name = "rules_jvm_external", version = "6.5")
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
@@ -71,7 +67,6 @@ maven.install(
     fail_if_repin_required = True,
     fetch_javadoc = True,
     fetch_sources = True,
-    generate_compat_repositories = True,
     # REPIN=1 bazel run @maven_logos//:pin
     lock_file = "//:maven_install.json",
     repositories = [
