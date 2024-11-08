@@ -7,23 +7,25 @@
   },
   "dependencies": {
     "@adobe/lit-mobx": "2.2.2",
-    "@spectrum-web-components/action-menu": "0.46.0",
-    "@spectrum-web-components/button": "0.46.0",
-    "@spectrum-web-components/icons-workflow": "0.46.0",
-    "@spectrum-web-components/menu": "0.46.0",
-    "@spectrum-web-components/overlay": "0.46.0",
-    "@spectrum-web-components/popover": "0.46.0",
-    "google-protobuf": "3.21.2",
+    "@spectrum-web-components/action-menu": "1.0.0",
+    "@spectrum-web-components/button": "1.0.0",
+    "@spectrum-web-components/icons-workflow": "1.0.0",
+    "@spectrum-web-components/menu": "1.0.0",
+    "@spectrum-web-components/overlay": "1.0.0",
+    "@spectrum-web-components/picker": "1.0.0",
+    "@spectrum-web-components/popover": "1.0.0",
+    "@spectrum-web-components/reactive-controllers": "1.0.0",
+    "google-protobuf": "3.21.4",
     "grpc-web": "1.5.0",
-    "inversify": "6.0.2",
+    "inversify": "6.0.3",
     "inversify-inject-decorators": "3.1.0",
-    "lit": "3.1.4",
-    "lit-html": "3.1.4",
-    "mobx": "6.12.3",
+    "lit": "3.2.1",
+    "lit-html": "3.2.1",
+    "mobx": "6.13.5",
     "reflect-metadata": "0.2.2"
   },
   "devDependencies": {
-    "@types/node": "20.14.2",
-    "typescript": "5.4.5"
+    "@types/node": "22.8.6",
+    "typescript": "5.6.3"
   }
 }

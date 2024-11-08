@@ -1,6 +1,7 @@
 {
+  "exclude": [],
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "composite": true,
     "declaration": true,
     "emitDecoratorMetadata": true,
@@ -8,16 +9,15 @@
     "experimentalDecorators": true,
     "inlineSources": true,
     "lib": [
-      "es6",
+      "esnext",
       "dom"
     ],
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "sourceMap": true,
-    // TODO : Re-enable strict after fixing d.ts generation for grpc-web clients
     "strict": false,
-    "target": "ES2022",
+    "target": "esnext",
     "types": [
       "node",
       "reflect-metadata"
@@ -27,6 +27,7 @@
     // decorators still work before removing or setting to true.
     // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#the-usedefineforclassfields-flag-and-the-declare-property-modifier
     "useDefineForClassFields": false,
+    "skipLibCheck": true,
     "paths": {
       "app/*": [
         "bazel-bin/app/*",
