@@ -22,6 +22,8 @@ ts_project(
         "//:node_modules/@spectrum-web-components/icons-workflow",
         "//:node_modules/@spectrum-web-components/menu",
         "//:node_modules/@spectrum-web-components/overlay",
+        "//:node_modules/@spectrum-web-components/picker",
+        "//:node_modules/@spectrum-web-components/reactive-controllers",
         "//:node_modules/@types/node",
         "//:node_modules/grpc-web",
         "//:node_modules/inversify",

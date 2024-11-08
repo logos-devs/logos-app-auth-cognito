@@ -7,7 +7,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
-import dev.logos.stack.aws.module.InfrastructureModule;
 import dev.logos.stack.aws.module.InfrastructureModule.AwsRegion;
 import dev.logos.user.AnonymousUser;
 import dev.logos.user.User;
@@ -29,16 +28,18 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static dev.logos.user.UserContext.USER_CONTEXT_KEY;
+import static java.lang.System.err;
+import static java.util.Objects.requireNonNull;
 
 public class CognitoServerInterceptor implements ServerInterceptor {
 
+    public static final Metadata.Key<String> AUTHORIZATION_METADATA_KEY = Metadata.Key.of("authorization", Metadata.ASCII_STRING_MARSHALLER);
     public static final Metadata.Key<String> COOKIE_METADATA_KEY = Metadata.Key.of("logos-cookies", Metadata.ASCII_STRING_MARSHALLER);
     private static final String COGNITO_IDENTITY_POOL_URL_TEMPLATE = "https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json";
 
@@ -53,8 +54,8 @@ public class CognitoServerInterceptor implements ServerInterceptor {
 
     @Inject
     public CognitoServerInterceptor(final CognitoStackOutputs cognitoStackOutputs, @AwsRegion String region, Logger logger) {
-        this.userPoolId = Objects.requireNonNull(cognitoStackOutputs.cognitoUserPoolId());
-        this.region = Objects.requireNonNull(region);
+        this.userPoolId = requireNonNull(cognitoStackOutputs.cognitoUserPoolId());
+        this.region = requireNonNull(region);
         this.logger = logger;
     }
 
@@ -62,28 +63,34 @@ public class CognitoServerInterceptor implements ServerInterceptor {
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call, final Metadata requestHeaders, ServerCallHandler<ReqT, RespT> next) {
         Context ctx = Context.current();
         User user = new AnonymousUser();
+        Metadata internalRequestHeaders = new Metadata();
+        internalRequestHeaders.merge(requestHeaders);
 
-        String cookieHeader = requestHeaders.get(COOKIE_METADATA_KEY);
-        if (cookieHeader != null) {
-            String idToken = extractIdTokenFromCookies(cookieHeader);
-            if (idToken != null) {
-                user = authenticateUser(idToken);
-            }
+        Optional<String> idToken = Optional.ofNullable(requestHeaders.get(AUTHORIZATION_METADATA_KEY))
+                .filter(authHeader -> authHeader.startsWith("Bearer "))
+                .map(authHeader -> authHeader.substring("Bearer ".length()))
+                .or(() -> Optional.ofNullable(requestHeaders.get(COOKIE_METADATA_KEY))
+                        .flatMap(this::extractIdTokenFromCookies));
+
+        if (idToken.isPresent()) {
+            String token = idToken.get();
+            user = authenticateUser(token);
+            internalRequestHeaders.put(AUTHORIZATION_METADATA_KEY, "Bearer " + token);
         }
 
-        return Contexts.interceptCall(ctx.withValue(USER_CONTEXT_KEY, user), call, requestHeaders, next);
+        return Contexts.interceptCall(ctx.withValue(USER_CONTEXT_KEY, user), call, internalRequestHeaders, next);
     }
 
-    private String extractIdTokenFromCookies(String cookieHeader) {
+    private Optional<String> extractIdTokenFromCookies(String cookieHeader) {
         String[] cookies = cookieHeader.split(";");
 
         for (String cookie : cookies) {
             String trimmedCookie = cookie.trim();
             if (trimmedCookie.startsWith("logosIdToken=")) {
-                return trimmedCookie.substring("logosIdToken=".length());
+                return Optional.of(trimmedCookie.substring("logosIdToken=".length()));
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     private User authenticateUser(String token) {
