@@ -15,6 +15,7 @@ import com.google.inject.multibindings.OptionalBinder;
 import dev.logos.app.AppModule;
 import dev.logos.app.register.registerModule;
 import dev.logos.stack.aws.module.EksModule.EksStack;
+import dev.logos.stack.aws.module.InfrastructureModule.StackOutputsJson;
 import software.amazon.awscdk.*;
 import software.amazon.awscdk.services.cognito.*;
 import software.amazon.awscdk.services.iam.Policy;
@@ -139,10 +140,8 @@ public class CognitoModule extends AppModule {
 
     @Provides
     @CognitoStackOutputsJson
-    InputStream cognitoStackOutputsJsonProvider() {
-        return Objects.requireNonNull(
-                getClass().getResourceAsStream(
-                        "/app/example/stack.json"));
+    InputStream cognitoStackOutputsJsonProvider(@StackOutputsJson String stackOutputsJson) {
+        return Objects.requireNonNull(getClass().getResourceAsStream(stackOutputsJson));
     }
 
     @Provides
