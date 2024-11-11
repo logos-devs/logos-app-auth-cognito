@@ -1,11 +1,12 @@
-/.aspect
 *.sw?
 /.DS_Store
+/.aspect
 /.bazelrc.local
 /.eclipse/projects
 /.ijwb/.blaze/modules/.workspace.iml
 /.ijwb/.idea/libraries
 /.ijwb/.idea/workspace.xml
+/.ijwb/aspect/
 /.pnpm-store
 /bazel-*
 /node_modules/*
