@@ -1,6 +1,7 @@
 java_library(
     name = "annotation",
     srcs = [
+        "AuthenticationCookieDomain.java",
         "CognitoClientCredentialsSecretArn.java",
         "CognitoUserPoolDomainBaseUrl.java",
         "CognitoUserPoolDomainRedirectUrl.java",

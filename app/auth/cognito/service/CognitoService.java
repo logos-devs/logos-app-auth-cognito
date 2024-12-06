@@ -1,6 +1,7 @@
 package app.auth.cognito.service;
 
 import app.auth.cognito.interceptor.cookie.CookieServerInterceptor;
+import app.auth.cognito.module.annotation.AuthenticationCookieDomain;
 import app.auth.cognito.module.data.CognitoClientCredentialsSecret;
 import app.auth.cognito.module.data.CognitoStackOutputs;
 import app.auth.proto.cognito.*;
@@ -15,8 +16,6 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.cookie.CookieSpec;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -33,14 +32,17 @@ public class CognitoService extends CognitoServiceGrpc.CognitoServiceImplBase im
     private static final String TOKEN_REQUEST_FAILURE_MSG = "Failed to retrieve a token.";
     private final CognitoStackOutputs cognitoStackOutputs;
     private final CognitoClientCredentialsSecret cognitoClientCredentialsSecret;
+    private final String authenticationCookieDomain;
 
     @Inject
     public CognitoService(
             final CognitoStackOutputs cognitoStackOutputs,
-            final CognitoClientCredentialsSecret cognitoClientCredentialsSecret
+            final CognitoClientCredentialsSecret cognitoClientCredentialsSecret,
+            @AuthenticationCookieDomain final String authenticationCookieDomain
     ) {
         this.cognitoStackOutputs = cognitoStackOutputs;
         this.cognitoClientCredentialsSecret = cognitoClientCredentialsSecret;
+        this.authenticationCookieDomain = authenticationCookieDomain;
     }
 
     @Override
@@ -76,8 +78,7 @@ public class CognitoService extends CognitoServiceGrpc.CognitoServiceImplBase im
             Context.current().withValue(
                     CookieServerInterceptor.COOKIE_KEY,
                     String.join("|",
-                            "logosIdToken=%s; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=28800; Partitioned".formatted(tokens.id_token)//,
-                            //"logosRefreshToken=%s; Path=/services/CognitoService/Refresh; Secure; HttpOnly; SameSite=Strict; Max-Age=3600; Partitioned".formatted(tokens.refresh_token())
+                            "logosIdToken=%s; Path=/; Domain=%s; Secure; HttpOnly; SameSite=None; Max-Age=28800".formatted(tokens.id_token, this.authenticationCookieDomain)//,
                     )
             ).wrap(() -> {
                 responseObserver.onNext(
