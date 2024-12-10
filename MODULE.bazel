@@ -6,7 +6,7 @@ module(
 bazel_dep(name = "logos")
 git_override(
     module_name = "logos",
-    commit = "90e7e9802a71de6f18efd6babfe10335a0b5457b",
+    commit = "486a9d37f7afb7ddc3ac0a4240b72a9cde81d0b3",
     init_submodules = True,
     remote = "https://github.com/logos-devs/logos",
 )
