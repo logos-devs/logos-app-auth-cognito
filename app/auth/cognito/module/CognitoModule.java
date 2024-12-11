@@ -15,7 +15,7 @@ import com.google.inject.multibindings.OptionalBinder;
 import dev.logos.app.AppModule;
 import dev.logos.app.register.registerModule;
 import dev.logos.stack.aws.module.EksModule.EksStack;
-import dev.logos.stack.aws.module.InfrastructureModule.StackOutputsJson;
+import dev.logos.stack.aws.module.annotation.StackOutputsJson;
 import software.amazon.awscdk.*;
 import software.amazon.awscdk.services.cognito.*;
 import software.amazon.awscdk.services.iam.Policy;

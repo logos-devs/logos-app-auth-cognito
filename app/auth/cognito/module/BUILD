@@ -13,6 +13,7 @@ java_library(
         "@logos//dev/logos/app",
         "@logos//dev/logos/app/register:module_library",
         "@logos//dev/logos/stack/aws/module",
+        "@logos//dev/logos/stack/aws/module/annotation",
         "@maven_logos//:com_google_code_gson_gson",
         "@maven_logos//:com_google_guava_guava",
         "@maven_logos//:com_google_inject_guice",

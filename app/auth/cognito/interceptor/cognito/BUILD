@@ -8,7 +8,7 @@ java_library(
         "//app/auth/cognito/module/annotation",
         "//app/auth/cognito/module/data",
         "//app/auth/cognito/user",
-        "@logos//dev/logos/stack/aws/module",
+        "@logos//dev/logos/stack/aws/module/annotation",
         "@logos//dev/logos/user",
         "@maven_logos//:com_google_code_gson_gson",
         "@maven_logos//:com_google_guava_guava",

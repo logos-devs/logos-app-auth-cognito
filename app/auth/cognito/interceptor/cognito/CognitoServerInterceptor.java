@@ -7,7 +7,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
-import dev.logos.stack.aws.module.InfrastructureModule.AwsRegion;
+import dev.logos.stack.aws.module.annotation.AwsRegion;
 import dev.logos.user.AnonymousUser;
 import dev.logos.user.User;
 import io.grpc.*;
