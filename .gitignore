@@ -9,4 +9,3 @@
 /.ijwb/aspect/
 /.pnpm-store
 /bazel-*
-/node_modules/*
